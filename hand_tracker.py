@@ -1,6 +1,8 @@
 import cv2
 import mediapipe as mp
 
+from gestures import Gestures
+
 
 cap = cv2.VideoCapture(0)
 
@@ -18,16 +20,10 @@ class HandTracker():
 				
 			if ready_hands.multi_hand_landmarks:
 				for hand in ready_hands.multi_hand_landmarks:
-					print(hand.x)
+					
 					mpDraw.draw_landmarks(img, hand, mpHands.HAND_CONNECTIONS)
-					lmlist = []
-					for id, lm in enumerate(hand.landmark):
-						h, w, c = img.shape
-						cx, cy = int(lm.x*w), int(lm.y*h)
-						lmlist.append([id,cx,cy])
-
-					if lmlist[4][2] - lmlist[8][2] <= 15 and lmlist[4][1] - lmlist[8][1] <= 10:
-						print("Yes")
+					Gestures.left_click(hand, img)
+					Gestures.right_click(hand, img)
 			
 			cv2.imshow("Hands tracker", img)
 			if cv2.waitKey(1) == ord('q'):
